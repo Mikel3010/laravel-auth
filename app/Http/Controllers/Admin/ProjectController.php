@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -27,7 +28,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.projects.create');
     }
 
     /**
@@ -38,7 +39,13 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $data = $request->validated();
+        $project = new Project();
+        $project->slug = Str::slug($data['title'],'-');
+        $project->fill($data);
+        $project->save();
+
+        return redirect()->route('admin.projects.index')->with('message', "Progetto $project->id creato");
     }
 
     /**
@@ -49,7 +56,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        return view('admin.projects.show', compact('project'));
     }
 
     /**
@@ -60,7 +67,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return view('admin.projects.edit', compact('project'));
     }
 
     /**
@@ -72,7 +79,13 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data = $request->validated();
+
+        $project->update($data);
+        $project->slug = Str::slug($data['title'],'-');
+        $project->save();
+
+        return redirect()->route('admin.projects.index')->with('message', "Progetto $project->id modificato");
     }
 
     /**
@@ -83,6 +96,8 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $old_id = $project->id;
+        $project->delete();
+        return redirect()->route('admin.projects.index')->with('message', "Progetto $old_id cancellato");
     }
 }
