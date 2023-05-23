@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\DashBoardController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Guest\PageController;
+use App\Http\Controllers\Guest\ProjectController as GuestProjectController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +21,8 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/', function () {
-    return view('welcome');
- });
+Route::get('/',[PageController::class,'index'])->name('homepage');
+Route::resource('projects', GuestProjectController::class);
 
 Route::middleware(['auth','verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/',[DashBoardController::class, 'index'])->name('dashboard');
