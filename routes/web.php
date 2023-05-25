@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/',[PageController::class,'index'])->name('homepage');
-Route::resource('projects', GuestProjectController::class);
+Route::resource('projects', GuestProjectController::class)->only(['index','show']);
 
 Route::middleware(['auth','verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/',[DashBoardController::class, 'index'])->name('dashboard');

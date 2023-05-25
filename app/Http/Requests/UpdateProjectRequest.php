@@ -32,6 +32,7 @@ class UpdateProjectRequest extends FormRequest
                 'max:100'
             ],
             'description'=>'nullable|string',
+            'image'=>'image|nullable'
         ];
     }
 }

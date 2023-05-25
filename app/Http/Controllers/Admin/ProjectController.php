@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProjectController extends Controller
@@ -39,10 +40,15 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
+        
         $data = $request->validated();
         $project = new Project();
-        $project->slug = Str::slug($data['title'],'-');
         $project->fill($data);
+
+        $project->slug = Str::slug($data['title'],'-');
+        if(isset($data['image'])){
+            $project->image = Storage::put('uploads', $data['image']);
+        }
         $project->save();
 
         return redirect()->route('admin.projects.index')->with('message', "Progetto $project->id creato");
@@ -80,9 +86,16 @@ class ProjectController extends Controller
     public function update(UpdateProjectRequest $request, Project $project)
     {
         $data = $request->validated();
+        $project->slug = Str::slug($data['title'],'-');
+
+        if(isset($data['image'])){
+            if($project->image){
+                Storage::delete($project->image);
+            }   
+            $project->image = Storage::put('uploads', $data['image']);
+        }
 
         $project->update($data);
-        $project->slug = Str::slug($data['title'],'-');
         $project->save();
 
         return redirect()->route('admin.projects.index')->with('message', "Progetto $project->id modificato");

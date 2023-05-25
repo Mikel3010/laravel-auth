@@ -48,6 +48,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {
+        
     }
 
     /**
